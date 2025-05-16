@@ -43,24 +43,16 @@ def get_content( html):
 
 
 def save_to_csv(data, filename):
-    """
-    Просто зберігає дані у CSV файл, який легко читатиме pandas.
-    
-    data - список словників (кожен словник - один рядок даних)
-    filename - ім'я файлу для збереження (наприклад, 'reviews.csv')
-    """
     with open(filename, 'w', encoding='utf-8', newline='') as file:
         writer = csv.writer(file)
-        
-        # Записуємо заголовки (беремо ключі з першого рядка даних)
         writer.writerow(data[0].keys())
         
-        # Записуємо дані
         for row in data:
             writer.writerow(row.values())
     
-    print(f"Дані збережено у {filename} ({len(data)} записів)")
-# Налаштування драйвера
+    print(f"Data saved as  {filename} ({len(data)} reviews)")
+
+    
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 url = "https://www.imdb.com/title/tt0418279/reviews/?ref_=ttrt_sa_3"
@@ -74,18 +66,16 @@ while True:
             EC.element_to_be_clickable((By.CLASS_NAME, "ipc-see-more__text"))
         )
         driver.execute_script("arguments[0].click();", load_more_button)
-        print("Кнопка 'Load More' натиснута.")
+        print("Button 'Load More' clicked")
         time.sleep(2)
     except:
-        print("Кнопка 'Load More' більше не знайдена.")
+        print("Button 'Load More' dont found")
         break
 
 
 page_html = driver.page_source
 res = get_content(page_html)
-print(f"Отримано {len(res)} відгуків.")
-
+print(f"Get {len(res)} reviews.")
 
 save_to_csv(res, "imdb_reviews1.csv")
 driver.quit()
-print("Завершено.")
